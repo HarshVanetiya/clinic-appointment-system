@@ -1,5 +1,5 @@
 /**
- * Signed, single-purpose booking links (cancel / reschedule).
+ * Signed, single-purpose booking links (cancel / reschedule / view).
  *
  *   token = base64url(payload) "." base64url(HMAC-SHA256(secret, purpose-domain + payload))
  *
@@ -12,11 +12,12 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import { z } from 'zod'
 
-export type TokenPurpose = 'cancel' | 'reschedule'
+/** `view` only shows the confirmation page; it can never change anything. */
+export type TokenPurpose = 'cancel' | 'reschedule' | 'view'
 
 const payloadSchema = z.object({
   b: z.uuid(),
-  p: z.enum(['cancel', 'reschedule']),
+  p: z.enum(['cancel', 'reschedule', 'view']),
   v: z.number().int().positive(),
   e: z.number().int().positive(),
 })

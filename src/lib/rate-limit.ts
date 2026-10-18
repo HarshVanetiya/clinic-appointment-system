@@ -31,7 +31,7 @@ export async function checkRateLimit(rule: RateLimitRule, identifier: string, no
   const windowStart = new Date(Math.floor(now / (rule.windowSec * 1000)) * rule.windowSec * 1000)
   const key = `${rule.name}:${identifier}`
   const rows = await db.execute<{ count: number }>(sql`
-    insert into rate_limits (key, window_start, count) values (${key}, ${windowStart}, 1)
+    insert into rate_limits (key, window_start, count) values (${key}, ${windowStart.toISOString()}::timestamptz, 1)
     on conflict (key, window_start) do update set count = rate_limits.count + 1
     returning count
   `)

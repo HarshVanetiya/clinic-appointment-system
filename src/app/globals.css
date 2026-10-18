@@ -1,0 +1,129 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Palette — calm, clinical-but-warm */
+  --color-paper: #f7f5f0;
+  --color-card: #ffffff;
+  --color-sage-50: #f1f5f2;
+  --color-sage-100: #e8efea;
+  --color-sage: #dde7df;
+  --color-sage-300: #c3d5c8;
+  --color-green: #2d6a4f;
+  --color-green-600: #285f47;
+  --color-green-700: #22523d;
+  --color-green-900: #14352a;
+  --color-ink: #1a1c1e;
+  --color-ink-soft: #33373b;
+  --color-muted: #586068;
+  --color-line: #e6e2d9;
+  --color-line-strong: #d3cec2;
+  --color-danger: #b42318;
+  --color-danger-bg: #fdecea;
+  --color-warn: #8a4b00;
+  --color-warn-bg: #fdf3e2;
+  --color-info-bg: #eaf1fb;
+  --color-info: #2b4f86;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-card: 1.5rem;
+  --radius-xl2: 1.25rem;
+
+  --shadow-soft: 0 1px 2px rgb(45 106 79 / 0.05), 0 10px 30px -12px rgb(45 106 79 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(45 106 79 / 0.06), 0 18px 40px -14px rgb(45 106 79 / 0.28);
+  --shadow-inset: inset 0 0 0 1px rgb(26 28 30 / 0.06);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-up: fade-up 280ms var(--ease-out-soft) both;
+  --animate-fade-in: fade-in 200ms var(--ease-out-soft) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight text-ink;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-green);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+  ::selection {
+    background: var(--color-sage);
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* prevents iOS zoom-on-focus */
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply font-mono text-[0.7rem] font-medium tracking-[0.12em] text-muted uppercase;
+  }
+  .skeleton {
+    background: linear-gradient(90deg, var(--color-sage-100) 25%, var(--color-sage-50) 37%, var(--color-sage-100) 63%);
+    background-size: 400% 100%;
+    @apply animate-shimmer rounded-xl;
+  }
+  .card {
+    @apply rounded-[var(--radius-card)] bg-card shadow-soft ring-1 ring-line/70;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
