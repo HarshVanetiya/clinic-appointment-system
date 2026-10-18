@@ -89,3 +89,13 @@ describe('formatting (en-IN, Asia/Kolkata)', () => {
     expect(initials('Dr. Ananya Rao')).toBe('AR')
   })
 })
+
+describe('formatLocalDate (deterministic, hydration-safe)', () => {
+  it('formats calendar days without Intl', async () => {
+    const { formatLocalDate } = await import('@/lib/format')
+    expect(formatLocalDate('2026-10-19', { weekday: 'long', day: 'numeric', month: 'long' })).toBe('Monday, 19 October')
+    expect(formatLocalDate('2026-10-19', { weekday: 'short' })).toBe('Mon')
+    expect(formatLocalDate('2026-10-19', { day: 'numeric', month: 'short', year: 'numeric' })).toBe('19 Oct 2026')
+    expect(formatLocalDate('2026-10-19', { day: 'numeric' })).toBe('19')
+  })
+})

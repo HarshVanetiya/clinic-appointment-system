@@ -1,6 +1,5 @@
 import type { Metadata, Route } from 'next'
 import { notFound } from 'next/navigation'
-import { connection } from 'next/server'
 import { Suspense } from 'react'
 import { DetailsForm } from '@/components/booking/details-form'
 import { Stepper } from '@/components/booking/stepper'
@@ -12,6 +11,7 @@ import { therapistChoice } from '@/lib/validation'
 import { getAvailability } from '@/server/availability'
 import { getPublicService, getPublicServices, getServiceTherapists } from '@/server/cached'
 import { getSettings } from '@/server/queries'
+import { requestNow } from '@/server/clock'
 
 export const metadata: Metadata = { title: 'Your details' }
 
@@ -40,7 +40,7 @@ async function DetailsStepper({ params }: { params: PageProps<'/book/[service]/d
 
 async function Details({ params, searchParams }: Pick<PageProps<'/book/[service]/details'>, 'params' | 'searchParams'>) {
   const [{ service: slug }, sp] = await Promise.all([params, searchParams])
-  await connection()
+  const now = await requestNow()
   const service = await getPublicService(slug)
   if (!service) notFound()
   const back = `/book/${slug}` as Route
@@ -57,7 +57,7 @@ async function Details({ params, searchParams }: Pick<PageProps<'/book/[service]
 
   // Friendly early check — the real guarantee happens inside the booking transaction.
   const { date } = utcToLocal(startMs, tz)
-  const slots = await getAvailability({ settings, service, therapist, from: date, to: date, now: Date.now() })
+  const slots = await getAvailability({ settings, service, therapist, from: date, to: date, now: now })
   const stillFree = slots.some((s) => s.start === startMs)
   const therapistLabel = therapist === 'any' ? 'First available' : (therapists.find((t) => t.id === therapist)?.name ?? 'First available')
 

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { connection } from 'next/server'
 import { Suspense } from 'react'
 import { BookTimeStep } from '@/components/booking/book-time-step'
 import { PickerSkeleton } from '@/components/booking/picker-skeleton'
@@ -12,6 +11,7 @@ import { getPublicService, getPublicServices, getServiceTherapists } from '@/ser
 import { initialWeek, weekAvailability } from '@/server/availability-view'
 import { getSettings } from '@/server/queries'
 import { utcToLocal } from '@/lib/time'
+import { requestNow } from '@/server/clock'
 
 export async function generateStaticParams() {
   return (await getPublicServices()).map((s) => ({ service: s.slug }))
@@ -60,7 +60,7 @@ async function TimeStepHeader({ params }: { params: PageProps<'/book/[service]'>
 
 async function TimeStep({ params, searchParams }: Pick<PageProps<'/book/[service]'>, 'params' | 'searchParams'>) {
   const [{ service: slug }, sp] = await Promise.all([params, searchParams])
-  await connection()
+  const now = await requestNow()
   const service = await getPublicService(slug)
   if (!service) notFound()
   const [settings, therapists] = await Promise.all([getSettings(), getServiceTherapists(service.id)])
@@ -69,7 +69,6 @@ async function TimeStep({ params, searchParams }: Pick<PageProps<'/book/[service
 
   const requested = typeof sp.therapist === 'string' ? sp.therapist : 'any'
   const therapist = requested === 'any' || therapists.some((t) => t.id === requested) ? requested : 'any'
-  const now = Date.now()
   const start = typeof sp.start === 'string' && !Number.isNaN(Date.parse(sp.start)) ? sp.start : null
   const requestedWeek = typeof sp.week === 'string' ? sp.week : start ? utcToLocal(Date.parse(start), settings.timeZone).date : null
   const week = await initialWeek({ settings, service, therapist, now }, requestedWeek)

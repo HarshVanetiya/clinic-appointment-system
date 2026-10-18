@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronLeft, ChevronRight, CalendarX2, RefreshCw, Users } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { useCallback, useEffect, useEffectEvent, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import type { AvailabilityDTO, SlotDTO, TherapistOption } from '@/lib/booking-types'
 import { cn } from '@/lib/cn'
 import { formatLocalDate } from '@/lib/format'
@@ -91,16 +91,17 @@ export function SlotPicker({
   const tz = data.timeZone
   const day = data.days.find((d) => d.date === selectedDate)
   const slots = useMemo(() => day?.slots ?? [], [day])
-  const selection = useMemo<SlotSelection | null>(() => {
-    if (!selectedStart) return null
+  let selection: SlotSelection | null = null
+  if (selectedStart) {
     for (const d of data.days) {
       const s = d.slots.find((x) => x.start === selectedStart)
-      if (s) return { start: s.start, label: s.label, date: d.date, therapist, therapistIds: s.therapistIds }
+      if (s) selection = { start: s.start, label: s.label, date: d.date, therapist, therapistIds: s.therapistIds }
     }
-    return null
-  }, [data, selectedStart, therapist])
-
-  useEffect(() => onChange?.(selection), [selection, onChange])
+  }
+  // Notify the parent only when the chosen slot actually changes.
+  const selectionKey = selection ? `${selection.start}|${selection.therapist}` : ''
+  const notify = useEffectEvent(() => onChange?.(selection))
+  useEffect(() => notify(), [selectionKey])
 
   const load = useCallback(
     async (nextTherapist: string, week: LocalDate) => {

@@ -1,6 +1,5 @@
 import { CalendarClock, PhoneCall } from 'lucide-react'
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 import { Suspense } from 'react'
 import { CancelForm } from '@/components/booking/cancel-form'
 import { PickerSkeleton } from '@/components/booking/picker-skeleton'
@@ -15,6 +14,7 @@ import { weekAvailability } from '@/server/availability-view'
 import { resolveManageToken } from '@/server/bookings'
 import { loadBookingView, type BookingView } from '@/server/booking-view'
 import { getServiceById, getSettings, therapistsForService } from '@/server/queries'
+import { requestNow } from '@/server/clock'
 
 export const metadata: Metadata = { title: 'Manage your booking', robots: { index: false } }
 
@@ -36,7 +36,7 @@ const MESSAGES = {
 
 async function Manage({ params }: { params: PageProps<'/manage/[token]'>['params'] }) {
   const { token } = await params
-  await connection()
+  const now = await requestNow()
   const purpose = peekPurpose(token)
   const settings = await getSettings()
   const phone = formatIndianMobile(settings.phone)
@@ -96,7 +96,6 @@ async function Manage({ params }: { params: PageProps<'/manage/[token]'>['params
   const therapists = service ? await therapistsForService(service.id) : []
   if (!service || therapists.length === 0) return <Problem kind="invalid" />
   const initialTherapist = therapists.some((t) => t.id === view.booking.therapistId) ? view.booking.therapistId : 'any'
-  const now = Date.now()
   const week = startOfWeek(utcToLocal(Math.max(now, view.booking.startsAt.getTime()), settings.timeZone).date)
   const initial = await weekAvailability({ settings, service, therapist: initialTherapist, weekStart: week, now, excludeBookingId: view.booking.id })
 

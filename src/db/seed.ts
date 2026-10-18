@@ -267,7 +267,8 @@ export async function seed(db: DB, opts: SeedOptions = {}) {
           now: pastNow,
         }).filter((sl) => sl.start % (30 * 60_000) === 0) // half-hour starts look more natural
         if (slots.length === 0) break
-        if (rand() < 0.35) {
+        // Past days look busy (realistic utilisation); upcoming days keep room to book in the demo.
+        if (rand() < (slots[0]!.start < now ? 0.3 : 0.6)) {
           // leave a gap: drop the first free slot by blocking it briefly
           busy.get(th.id)!.push({ start: slots[0]!.start, end: slots[0]!.start + 30 * 60_000 })
           continue

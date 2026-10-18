@@ -12,6 +12,8 @@ export default function OfflinePage() {
       </span>
       <h1 className="mt-5 text-3xl font-extrabold">You&apos;re offline</h1>
       <p className="mt-2 text-muted">Booking needs a connection so we can show live availability. Reconnect and try again.</p>
+      {/* A full page load (not a client navigation) is what we want when coming back online. */}
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
       <a href="/" className="mt-6 inline-flex h-11 items-center rounded-full bg-green px-5 font-semibold text-white">
         Try again
       </a>
