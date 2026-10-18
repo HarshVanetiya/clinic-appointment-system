@@ -15,7 +15,7 @@ export default async function ChooseServicePage() {
       <p className="mt-2 text-muted">Not sure? Start with an Initial Assessment — we&apos;ll guide you from there.</p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {services.length ? (
-          services.map((s, i) => <ServiceCard key={s.id} service={s} index={i} />)
+          services.map((s, i) => <ServiceCard key={s.id} service={s} index={i} headingLevel={2} />)
         ) : (
           <div className="sm:col-span-2 lg:col-span-3">
             <EmptyState title="Online booking is paused" body="We're updating our treatments. Please call the clinic to book." />

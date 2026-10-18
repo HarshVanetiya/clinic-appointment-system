@@ -10,7 +10,8 @@ export interface ServiceSummary {
   pricePaise: number
 }
 
-export function ServiceCard({ service, index = 0 }: { service: ServiceSummary; index?: number }) {
+export function ServiceCard({ service, index = 0, headingLevel = 3 }: { service: ServiceSummary; index?: number; headingLevel?: 2 | 3 }) {
+  const Heading = headingLevel === 2 ? 'h2' : 'h3'
   return (
     <Link
       href={`/book/${service.slug}`}
@@ -18,7 +19,7 @@ export function ServiceCard({ service, index = 0 }: { service: ServiceSummary; i
       style={{ animationDelay: `${Math.min(index, 6) * 40}ms` }}
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-lg font-bold">{service.name}</h3>
+        <Heading className="text-lg font-bold">{service.name}</Heading>
         <span className="shrink-0 font-display text-lg font-bold text-green">{formatINR(service.pricePaise)}</span>
       </div>
       <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-muted">{service.description}</p>

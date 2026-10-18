@@ -271,10 +271,10 @@ export function SlotPicker({
                 onKeyDown={(e) => dayKeys(e, i)}
                 className={cn(
                   'flex flex-col items-center rounded-2xl py-2.5 transition-[background-color,box-shadow,color] duration-200 active:scale-[0.97] sm:py-3',
-                  checked ? 'bg-green text-white shadow-soft' : count ? 'bg-card text-ink ring-1 ring-line hover:ring-green/50' : 'bg-transparent text-muted/70',
+                  checked ? 'bg-green text-white shadow-soft' : count ? 'bg-card text-ink ring-1 ring-line hover:ring-green/50' : 'bg-transparent text-muted',
                 )}
               >
-                <span className="font-mono text-[0.62rem] tracking-wider uppercase opacity-80">{formatLocalDate(d.date, { weekday: 'short' })}</span>
+                <span className="font-mono text-[0.62rem] tracking-wider uppercase">{formatLocalDate(d.date, { weekday: 'short' })}</span>
                 <span className="font-display text-lg leading-tight font-bold sm:text-xl">{formatLocalDate(d.date, { day: 'numeric' })}</span>
                 <span aria-hidden className={cn('mt-1 size-1.5 rounded-full', count ? (checked ? 'bg-white' : 'bg-green') : 'bg-transparent')} />
               </button>

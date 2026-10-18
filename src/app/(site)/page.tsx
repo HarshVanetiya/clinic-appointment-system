@@ -16,7 +16,8 @@ export default async function HomePage() {
       <section className="relative overflow-hidden">
         <div aria-hidden className="pointer-events-none absolute -top-40 right-[-10%] size-[520px] rounded-full bg-sage/70 blur-3xl" />
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pt-12 pb-16 sm:px-6 md:grid-cols-[1.15fr_1fr] md:pt-20 md:pb-24">
-          <div className="animate-fade-up">
+          {/* No entrance animation here: this text is the LCP element. */}
+          <div>
             <Eyebrow className="mb-4">Indiranagar · Bengaluru</Eyebrow>
             <h1 className="text-[2.4rem] leading-[1.05] font-extrabold sm:text-5xl md:text-6xl">
               Move well.

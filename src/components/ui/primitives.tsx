@@ -47,7 +47,7 @@ export function EmptyState({ icon, title, body, action }: { icon?: ReactNode; ti
   return (
     <div className="flex flex-col items-center rounded-[var(--radius-card)] border border-dashed border-line-strong bg-card/60 px-6 py-12 text-center">
       {icon && <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-sage text-green">{icon}</div>}
-      <h3 className="text-lg font-bold">{title}</h3>
+      <h2 className="text-lg font-bold">{title}</h2>
       {body && <p className="mt-1 max-w-sm text-sm text-muted">{body}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>

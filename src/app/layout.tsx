@@ -4,9 +4,9 @@ import { OfflineBanner } from '@/components/pwa/offline-banner'
 import { RegisterServiceWorker } from '@/components/pwa/register-sw'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
-const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap', weight: ['500', '600', '700', '800'] })
-const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains', display: 'swap', weight: ['400', '500'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'optional' })
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'optional', weight: ['500', '600', '700', '800'] })
+const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains', display: 'optional', weight: ['400', '500'] })
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL ?? 'http://localhost:3000'),
