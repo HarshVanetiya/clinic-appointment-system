@@ -1,6 +1,6 @@
 import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
-import { getSettings, listActiveServices, listActiveTherapists, getServiceBySlug, therapistsForService } from './queries'
+import { getServiceBySlug, getSettings, listActiveServices, listActiveTherapists } from './queries'
 
 /**
  * Public, rarely-changing data rendered into the static shell. Admin mutations
@@ -44,11 +44,4 @@ export async function getPublicTherapists() {
   cacheLife('hours')
   cacheTag(TAGS.therapists)
   return listActiveTherapists()
-}
-
-export async function getServiceTherapists(serviceId: string) {
-  'use cache'
-  cacheLife('hours')
-  cacheTag(TAGS.therapists, TAGS.services)
-  return therapistsForService(serviceId)
 }

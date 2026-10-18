@@ -76,6 +76,7 @@ export async function sendEmail(email: OutgoingEmail): Promise<void> {
       const base = `${new Date().toISOString().replace(/[:.]/g, '-')}-${email.kind}-${email.bookingId ?? 'none'}`
       await mkdir(dir, { recursive: true })
       await writeFile(path.join(dir, `${base}.html`), html)
+      await writeFile(path.join(dir, `${base}.json`), JSON.stringify({ kind: email.kind, to: email.to, subject: email.subject, bookingId: email.bookingId }, null, 2))
       if (email.ics) await writeFile(path.join(dir, `${base}.ics`), email.ics.content)
       console.info(`[email:${email.kind}] → ${email.to} · "${email.subject}" (saved to .emails/${base}.html)`)
     }

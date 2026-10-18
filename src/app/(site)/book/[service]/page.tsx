@@ -7,9 +7,9 @@ import { ServiceSummary } from '@/components/booking/service-summary'
 import { Stepper } from '@/components/booking/stepper'
 import { EmptyState, Skeleton } from '@/components/ui/primitives'
 import { ButtonLink } from '@/components/ui/button'
-import { getPublicService, getPublicServices, getServiceTherapists } from '@/server/cached'
+import { getPublicService, getPublicServices } from '@/server/cached'
 import { initialWeek, weekAvailability } from '@/server/availability-view'
-import { getSettings } from '@/server/queries'
+import { getServiceBySlug, getSettings, therapistsForService } from '@/server/queries'
 import { utcToLocal } from '@/lib/time'
 import { requestNow } from '@/server/clock'
 
@@ -61,9 +61,10 @@ async function TimeStepHeader({ params }: { params: PageProps<'/book/[service]'>
 async function TimeStep({ params, searchParams }: Pick<PageProps<'/book/[service]'>, 'params' | 'searchParams'>) {
   const [{ service: slug }, sp] = await Promise.all([params, searchParams])
   const now = await requestNow()
-  const service = await getPublicService(slug)
+  // Live (uncached) lookups: availability must never be computed from stale IDs.
+  const service = await getServiceBySlug(slug)
   if (!service) notFound()
-  const [settings, therapists] = await Promise.all([getSettings(), getServiceTherapists(service.id)])
+  const [settings, therapists] = await Promise.all([getSettings(), therapistsForService(service.id)])
   if (therapists.length === 0)
     return <EmptyState title="No therapists available" body="This treatment can't be booked online right now. Please call the clinic." action={<ButtonLink href="/book" variant="secondary">Choose another treatment</ButtonLink>} />
 

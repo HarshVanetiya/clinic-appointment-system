@@ -9,8 +9,8 @@ import { formatDateTime, formatDuration, formatINR } from '@/lib/format'
 import { utcToLocal } from '@/lib/time'
 import { therapistChoice } from '@/lib/validation'
 import { getAvailability } from '@/server/availability'
-import { getPublicService, getPublicServices, getServiceTherapists } from '@/server/cached'
-import { getSettings } from '@/server/queries'
+import { getPublicServices } from '@/server/cached'
+import { getServiceBySlug, getSettings, therapistsForService } from '@/server/queries'
 import { requestNow } from '@/server/clock'
 
 export const metadata: Metadata = { title: 'Your details' }
@@ -41,7 +41,7 @@ async function DetailsStepper({ params }: { params: PageProps<'/book/[service]/d
 async function Details({ params, searchParams }: Pick<PageProps<'/book/[service]/details'>, 'params' | 'searchParams'>) {
   const [{ service: slug }, sp] = await Promise.all([params, searchParams])
   const now = await requestNow()
-  const service = await getPublicService(slug)
+  const service = await getServiceBySlug(slug)
   if (!service) notFound()
   const back = `/book/${slug}` as Route
 
@@ -52,7 +52,7 @@ async function Details({ params, searchParams }: Pick<PageProps<'/book/[service]
     return <EmptyState title="Let's pick a time first" body="Your booking link is missing a time." action={<ButtonLink href={back}>Choose a time</ButtonLink>} />
   }
   const therapist = therapistParsed.data
-  const [settings, therapists] = await Promise.all([getSettings(), getServiceTherapists(service.id)])
+  const [settings, therapists] = await Promise.all([getSettings(), therapistsForService(service.id)])
   const tz = settings.timeZone
 
   // Friendly early check — the real guarantee happens inside the booking transaction.
