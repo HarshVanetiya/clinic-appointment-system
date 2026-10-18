@@ -76,13 +76,13 @@ async function Schedule({ searchParams }: { searchParams: PageProps<'/staff'>['s
               ))}
             </div>
             <div className="inline-flex items-center gap-1">
-              <Link href={href({ date: addDays(date, -step) })} aria-label={`Previous ${view}`} className={buttonClass('ghost', 'sm', 'w-9 px-0')}>
+              <Link href={href({ date: addDays(date, -step) })} aria-label={`Previous ${view}`} className="flex size-9 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-sage-100 active:scale-95">
                 <ChevronLeft aria-hidden className="size-4" />
               </Link>
               <Link href={href({ date: today })} className={buttonClass('secondary', 'sm')}>
                 Today
               </Link>
-              <Link href={href({ date: addDays(date, step) })} aria-label={`Next ${view}`} className={buttonClass('ghost', 'sm', 'w-9 px-0')}>
+              <Link href={href({ date: addDays(date, step) })} aria-label={`Next ${view}`} className="flex size-9 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-sage-100 active:scale-95">
                 <ChevronRight aria-hidden className="size-4" />
               </Link>
             </div>

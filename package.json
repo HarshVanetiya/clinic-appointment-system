@@ -19,7 +19,8 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:seed": "tsx scripts/seed.ts",
     "db:reset": "tsx scripts/reset.ts && npm run db:migrate && npm run db:seed",
-    "icons": "tsx scripts/generate-icons.ts"
+    "icons": "tsx scripts/generate-icons.ts",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "dependencies": {
     "@date-fns/tz": "^1.5.0",

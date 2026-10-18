@@ -14,8 +14,8 @@ export function AppointmentCard({ b, timeZone, now, showTherapist }: { b: Bookin
       className={cn('flex gap-4 rounded-2xl bg-card p-4 ring-1 ring-line transition-shadow hover:shadow-soft', b.status === 'cancelled' && 'opacity-60')}
       aria-label={`${formatTime(b.startsAt, timeZone)} ${b.patientName}, ${b.serviceName}`}
     >
-      <div className="w-16 shrink-0 text-right">
-        <p className="font-display text-base font-bold tabular-nums">{formatTime(b.startsAt, timeZone)}</p>
+      <div className="w-[4.75rem] shrink-0 text-right">
+        <p className="font-display text-base font-bold whitespace-nowrap tabular-nums">{formatTime(b.startsAt, timeZone)}</p>
         <p className="font-mono text-[0.68rem] text-muted">{formatDuration(b.durationMin)}</p>
       </div>
       <div className="w-1 shrink-0 rounded-full" style={{ backgroundColor: b.therapistAccent }} aria-hidden />
