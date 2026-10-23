@@ -4,6 +4,8 @@ A production-grade appointment system for a (fictional) multi-therapist physioth
 
 > Portfolio build. All people, phone numbers and addresses are invented. Emails use the reserved `example.com` domain.
 
+> **How this was built:** written with [Claude Code](https://claude.com/claude-code), Anthropic's AI coding agent, working from my requirements.
+
 ![Mobile booking flow](docs/screenshots/03-mobile-pick-time.png)
 
 ## What's inside
