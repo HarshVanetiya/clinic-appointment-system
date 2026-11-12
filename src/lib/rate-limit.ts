@@ -15,6 +15,8 @@ export const RATE_LIMITS = {
   manage: { name: 'manage', limit: 10, windowSec: 600 },
   availability: { name: 'availability', limit: 120, windowSec: 60 },
   login: { name: 'login', limit: 10, windowSec: 600 },
+  /** Chat messages per visitor: protects the AI quota on a public site. */
+  assistant: { name: 'assistant', limit: 30, windowSec: 600 },
 } satisfies Record<string, RateLimitRule>
 
 /** Best-effort client IP behind Vercel / proxies. */

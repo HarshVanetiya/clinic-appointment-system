@@ -1,4 +1,5 @@
 import { CalendarCheck2, HeartPulse, MapPin, ShieldCheck, Smartphone, Timer } from 'lucide-react'
+import { OpenAssistantButton } from '@/components/assistant/open-button'
 import { ButtonLink } from '@/components/ui/button'
 import { Avatar, Card, Eyebrow } from '@/components/ui/primitives'
 import { ServiceCard } from '@/components/site/service-card'
@@ -31,6 +32,7 @@ export default async function HomePage() {
               <ButtonLink href="/book" size="lg">
                 Book an appointment
               </ButtonLink>
+              <OpenAssistantButton>Book by chat</OpenAssistantButton>
               <ButtonLink href="/#services" size="lg" variant="ghost">
                 See treatments
               </ButtonLink>

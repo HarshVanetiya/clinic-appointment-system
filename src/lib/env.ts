@@ -9,6 +9,9 @@ const schema = z.object({
   RESEND_API_KEY: z.string().optional().default(''),
   EMAIL_FROM: z.string().default('Northside Physio <bookings@example.com>'),
   CRON_SECRET: z.string().min(16).optional(),
+  /** Google AI Studio key for the booking assistant. Without it the chat runs a keyword fallback. */
+  GEMINI_API_KEY: z.string().optional().default(''),
+  GEMINI_MODEL: z.string().optional().default(''),
 })
 
 let cached: z.infer<typeof schema> | undefined

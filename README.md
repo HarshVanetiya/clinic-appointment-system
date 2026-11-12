@@ -10,12 +10,13 @@ A production-grade appointment system for a (fictional) multi-therapist physioth
 
 | Who | What they can do |
 | --- | --- |
-| **Patient** (no account) | Browse treatments → pick a therapist or "any available" → choose a slot on a week strip + time grid → enter details → get a confirmation email with an `.ics` invite → reschedule or cancel from signed links in that email |
+| **Patient** (no account) | Describe the problem to the **AI booking assistant** and confirm a time in the chat, or: browse treatments → pick a therapist or "any available" → choose a slot on a week strip + time grid → enter details → get a confirmation email with an `.ics` invite → reschedule or cancel from signed links in that email |
 | **Therapist** | Sign in, see their own day/week schedule, mark appointments completed / no-show, block time off |
 | **Admin** (clinic owner) | Dashboard (today, upcoming, utilisation per therapist), all bookings with filters + CSV export, walk-in / phone bookings, services, therapists & working hours, holidays, booking rules |
 
 Highlights:
 
+- **Book by chat.** A patient types “lower back pain, tomorrow evening”. The assistant suggests the right treatment, shows real free times from the same engine as the booking pages, and hands over to a confirm card. It never diagnoses, sends emergencies to 112, and cannot create a booking on its own. See [AI booking assistant](#ai-booking-assistant).
 - **No double booking, ever.** A Postgres `EXCLUDE USING gist` constraint on `(therapist, [start, end+buffer))` plus a transaction that row-locks the therapist. If two patients race, one wins and the other sees *"That time was just taken — here are the nearest options"*. This is proven by a test that fires 20 simultaneous requests.
 - **Time zones done right.** Instants are stored in UTC. Recurring rules use the clinic's wall-clock time (`Asia/Kolkata`, which has a +05:30 offset). The engine is zone-generic and DST-tested against `Europe/London` and `America/New_York`.
 - **India-first.** INR pricing with Indian digit grouping (₹1,25,000), `en-IN` dates, +91 mobile validation that accepts how people actually type numbers.
@@ -79,6 +80,8 @@ Without `RESEND_API_KEY`, every email is written to `./.emails/` as HTML + `.ics
 | `BOOKING_TOKEN_SECRET` | ✅ | HMAC key for cancel / reschedule / view links. Rotating it invalidates every outstanding link. |
 | `RESEND_API_KEY` | prod | Resend API key. If empty, emails are logged to `.emails/`. |
 | `EMAIL_FROM` | prod | e.g. `Northside Physio <bookings@yourdomain.in>`. The domain must be verified in Resend. |
+| `GEMINI_API_KEY` | optional | Google AI Studio key for the booking assistant. Without it the chat runs in basic mode (keyword matching). |
+| `GEMINI_MODEL` | optional | Defaults to `gemini-flash-latest`. |
 | `CRON_SECRET` | prod | Bearer token for `/api/cron/reminders`. Vercel Cron sends it automatically. |
 | `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` | optional | Stable key if you self-host on multiple instances. |
 | `TEST_DATABASE_URL` | tests | Defaults to `postgres://postgres:postgres@localhost:5432/northside_test`. |
@@ -114,6 +117,27 @@ Two schedulers are included. Use either or both:
 
    Scheduled workflows only run from the **default branch** and can be delayed by a few minutes at busy times. GitHub also disables them after 60 days without repository activity; re-enable with one click.
 
+## AI booking assistant
+
+A **Book by chat** button on the public pages opens a chat that turns a sentence into a booking.
+
+1. `POST /api/assistant` receives the conversation (rate-limited per visitor: 30 messages per 10 minutes).
+2. With `GEMINI_API_KEY` set, `src/server/assistant/gemini.ts` calls Google's Gemini API with three tools:
+   - `show_treatments`: show treatment cards.
+   - `find_slots`: free times for a treatment, date and therapist, from the same availability engine as the booking pages.
+   - `propose_booking`: checks one exact time is still free, then shows the confirm card.
+3. The patient types their name, mobile and email **on the card**, which posts to the same `bookAppointment` Server Action as the booking page. Validation, the double-booking guarantee and the confirmation email are therefore identical.
+
+Design decisions worth knowing:
+
+- **The model cannot book.** It has no tool that writes to the database. A person always taps Confirm.
+- **The model cannot invent a time.** Every time it offers comes from `find_slots`, and `propose_booking` re-checks it against live data.
+- **Contact details never reach the AI.** They are entered on the card and go straight to the clinic's server. The chat itself (what the patient describes) is sent to Google.
+- **It is not a clinician.** The system prompt forbids diagnosis and advice, and sends possible emergencies to 112. The keyword fallback has the same emergency rule.
+- **Works without a key.** With no key, or if the AI call fails, `src/server/assistant/basic.ts` handles treatments, common complaints, days and times by keyword. The chat header says “Basic mode”.
+
+Google's free tier may use prompts to improve its products. For a real clinic, use a paid key and add a line about the assistant to the privacy notice. To change provider, replace `gemini.ts`; nothing else depends on it.
+
 ## Deploying to Vercel + Neon
 
 1. **Database.** Create a Neon project, region `aws-ap-south-1` (Mumbai), and copy the **pooled** connection string.
@@ -148,6 +172,7 @@ src/
     bookings.ts        create / reschedule / cancel transactions
     availability.ts    loads schedules → engine          queries.ts, staff-queries.ts
     email/             React Email templates, Resend sender, notifications
+    assistant/         AI booking assistant: tools, prompt, Gemini client, keyword fallback
     reminders.ts       cron job logic                    dal.ts   requireStaff() authorization
   db/                  Drizzle schema, client, seed
 drizzle/               SQL migrations (0001 = exclusion constraint)
